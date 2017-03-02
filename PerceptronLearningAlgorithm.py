@@ -2,7 +2,7 @@
 """
 Created on Sat Jan 28 14:20:37 2017
 
-@author: brandonjamesmcmahan
+@author: Brandon McMahan
 Perceptron Learning Algorithm 
 """
 import numpy as np
@@ -10,18 +10,18 @@ import random
 import matplotlib.pyplot as plt
 #import time
 
-#create target function
-#generate two random points in X
-x1 = random.uniform(-1,1) 
-y1 = random.uniform(-1,1)
-
-x2 = random.uniform(-1,1) 
-y2 = random.uniform(-1,1)
-
+#choose a line that will determine classification of points in R2
+#we define a line with two random points
+#point one
+x1 = random.uniform(-1,1); y1 = random.uniform(-1,1)
+#point two
+x2 = random.uniform(-1,1); y2 = random.uniform(-1,1)
+#get slope and intercept for this line
 m = (y2 - y1) / (x2 - x1)
 b = y1 - m*x1
 
-#definition of target function
+
+#definition a target classification function based on random line
 def targetFunction(m,b,x1,x2):
     if x2 > m*x1 + b:
         return +1
@@ -29,37 +29,20 @@ def targetFunction(m,b,x1,x2):
         return -1
 #end creation of target function
         
-#begin experiment, we will iterate 1000 times
-#counts = np.zeros(2)
-#error = np.zeros(2)
-#for iteration in range(0, 1):
-#reinsert all code here
-N = 100;
-#generate training data
-x = np.zeros((3,N))
-y = np.zeros(N)
+
+N = 100;   #generate N training data points
+x = np.zeros((3,N))     #initialize training data examples
+y = np.zeros(N)         #initialize training data labels
 for n in range(0,N):
-    x[0][n] = 1     #we need this for PLA
+    x[0][n] = 1     #we need this as a threshold for PLA
     x[1][n] = random.uniform(-1,1)
     x[2][n] = random.uniform(-1,1)
     y[n] = targetFunction(m,b,x[1][n],x[2][n])
+#end generation of training data points
 
 
-x_series = np.linspace(-1,1,1000)
-#extract negative and positive points
-neg_pts_x1 = []
-neg_pts_x2 = []
-pos_pts_x1 = []
-pos_pts_x2 = []
-for i in range(0,N):
-    if y[i] < 0:
-        neg_pts_x1.append(x[1][i])
-        neg_pts_x2.append(x[2][i])    
-    elif y[i] > 0:
-        pos_pts_x1.append(x[1][i])
-        pos_pts_x2.append(x[2][i])
-
-#initialize weight matrix
+#initialize weight matrix for the perceptron
+#we will update weights on each iteration
 w = np.zeros(3)
 counts = 0
 #loop over iterations to get hypothesis set to converge
@@ -70,7 +53,10 @@ while not np.all(np.sign(np.dot(w,x)) == y):
         else:
             w = w
         counts = counts +1
-        print "In iteration %.2d" %counts
+        #print "In iteration %.2d" %counts
+
+
+
         #plot random training data
 #
 #        time.sleep(5)
@@ -104,6 +90,22 @@ print"\n\n"
 
 
 
+x_series = np.linspace(-1,1,1000)
+#extract negative and positive points
+neg_pts_x1 = []
+neg_pts_x2 = []
+pos_pts_x1 = []
+pos_pts_x2 = []
+for i in range(0,N):
+    if y[i] < 0:
+        neg_pts_x1.append(x[1][i])
+        neg_pts_x2.append(x[2][i])    
+    elif y[i] > 0:
+        pos_pts_x1.append(x[1][i])
+        pos_pts_x2.append(x[2][i])
+
+
+#plot training data and how the perceptron did in classification
 plt.scatter(neg_pts_x1,neg_pts_x2,c='b')
 plt.scatter(pos_pts_x1,pos_pts_x2,c='r')
 plt.plot(x_series, -(x_series*w[1]+w[0])/w[2])
