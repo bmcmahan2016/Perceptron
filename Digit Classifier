@@ -1,0 +1,138 @@
+ # -*- coding: utf-8 -*-
+"""
+Created on Thu Mar 2 18:55:37 2017
+
+@author: Brandon McMahan
+Perceptron Digit Classifier 
+will use the pocket algorithm 
+"""
+
+#load the MNIST data
+#mnist.train 55,000 training data points
+#mnist.test 10,000 points of testing data
+#mnist.validate 5,000 points of validation data
+from tensorflow.examples.tutorials.mnist import input_data
+mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
+
+#import desired packages
+import numpy as np
+#import random
+#import matplotlib.pyplot as plt
+
+def error_fcn(network, y):
+    error = 0.0 #initialize error as a flaoting point
+    for i in range(len(network)):
+        if network[i]==y[i]:
+            error = error + 0.0
+        else:
+            error = error + 1.0
+    #normalize error
+    error = error/len(network)
+    return error
+
+N = 20000;   #generate N training data points
+x = np.zeros((N,785))     #initialize training data examples
+y = np.zeros((N,10))         #this will label the data
+for n in range(0,N):
+    x[n][0] = 1                             #we need this as a threshold for PLA
+    x_,y_ = mnist.train.next_batch(1)
+    x[n][1:785] = x_                        #this is the data for each image
+    y[n] = y_
+#end generation of training data points
+
+#PERCEPTRON 1
+print "--IN SAMPLE ERROR FOR PERCEPTRON 1-- \n" 
+#define a target function for perceptron one
+def Ptarget(y,i):
+    if y[i] == 1:
+        return +1
+    else:
+        return -1
+
+y1 = np.zeros(N)
+for i in range(N):
+    y1[i] = Ptarget(y[i],1)
+
+#initialize weight matrix for the perceptron
+#we will update weights on each iteration
+w1 = np.zeros(785)
+counts = 0
+#loop over iterations to get hypothesis set to converge
+error = 10
+while (error > 0.05):
+    #tmp = np.sign(np.dot(x,w1)) - y1
+    #error = tmp/N
+    #implement learning rule
+    for n in range(0,N):
+        if y1[n]!=np.sign(np.dot(w1,x[n][0:785])):
+            w1 = w1 + y1[n]*x[n][0:785]
+        else:
+            w1 = w1
+        counts = counts +1
+    error = error_fcn(np.sign(np.dot(x,w1)),y1)
+    print "Perceptron 1 in sample error: %.4f%%" %(100.0*error)
+                                                
+    #print error
+print "%.2d iterations required for convergence of perceptron 1" %counts
+#END PERCEPTRON 1
+
+#PERCEPTRON 2
+y2 = np.zeros(N)
+for i in range(N):
+    y2[i] = Ptarget(y[i],2)
+
+#initialize weight matrix for the perceptron
+#we will update weights on each iteration
+w2 = np.zeros(785)
+counts = 0
+error = 10
+#loop over iterations to get hypothesis set to converge
+while (error > 0.05):
+    #implement learning rule
+    for n in range(0,N):
+        if y2[n]!=np.sign(np.dot(w2,x[n][0:785])):
+            w2 = w2 + y2[n]*x[n][0:785]
+        else:
+            w2 = w2
+        counts = counts +1
+    error = error_fcn(np.sign(np.dot(x,w1)),y1)
+    print "Perceptron 2 in sample error: %.4f%%" %(100.0*error)
+#END PERCEPTRON 2
+
+
+
+#create perceptron class
+class Perceptron(object):
+    #construct a perceptron object
+    def __init__(self,noInputs, noExamples):
+        self.y = np.zeros(noExamples)
+        self.w = np.zeros(noInputs+1)
+    
+    def target_fcn(self,digit,labels):
+        for i in range(len(labels)):
+            if labels[i][digit] == 1:
+                self.y[i] = +1
+            else:
+                self.y[i] = -1
+    
+    def learn(self,x):
+        for n in range(0,N):
+            if self.y[n]!=np.sign(np.dot(self.w,x[n][0:785])):
+                self.w = self.w + self.y[n]*x[n][0:785]
+            else:
+                self.w = self.w
+        
+    #method to compute the current in sample error for perceptron
+    def error_fcn(self, network, y):
+        network = np.sign(np.dot(x,np.w))
+        error = 0.0 #initialize error as a flaoting point
+        for i in range(len(network)):
+            if network[i]==np.y[i]:
+                error = error + 0.0
+            else:
+                error = error + 1.0
+        #normalize error
+        error = error/len(network)
+        return error
+
+#np.all(np.sign(np.dot(x,w2)) == y2):
