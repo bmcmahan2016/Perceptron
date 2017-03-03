@@ -16,7 +16,18 @@ mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
 
 #import desired packages
 import numpy as np
+import matplotlib.pyplot as plt
 
+
+#this unpacks in backwards order
+#correct this latter
+def rconfig(data):
+    imge = np.zeros([28,28])
+    for i in range(28):
+        imge[i] =  data[i*28:i*28+28] 
+    return imge
+    
+        
 
 #create perceptron class
 class Perceptron(object):
@@ -53,6 +64,18 @@ class Perceptron(object):
         return error
 #end creation of perceptron class
 
+#BEGIN CREATION OF NETWORK CLASS
+class Network(object):
+    def __init__(self,perceptrons):
+        self.perceptrons = perceptrons
+    
+    def Input(self,data_in):
+        outputs = np.zeros(len(self.perceptrons))
+        for i in range(len(self.perceptrons)):
+            outputs[i] = np.sign(np.dot(self.perceptrons[i].w,data_in))
+        #digit = np.nonzero(outputs)
+        return outputs
+#END CREATION OF NETWORK CLASS
 
 N = 10000;   #generate N training data points
 x = np.zeros((N,785))     #initialize training data examples
@@ -203,3 +226,16 @@ while (error > 0.05):
     counts = counts + 1
 print "%.2d iterations required for convergence of perceptron 10" %counts
 #END PERCEPTRON 6
+
+
+#create nework object
+simpleNet = Network([p0,p1,p2,p3,p4,p5,p6,p7,p8,p9])
+#generate a test data point
+data1 = np.zeros(785)
+data1[0] = 1
+data1[1:785],data2 = mnist.train.next_batch(1)
+#plot the data
+imge = rconfig(data1[1:785])
+plt.imshow(imge)
+
+outputs = simpleNet.Input(data1)
