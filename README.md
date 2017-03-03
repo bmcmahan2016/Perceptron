@@ -1,2 +1,2 @@
 # Perceptron
-This code generates a very simple toy perceptron model that can be used to classify linearly seperable two dimensional data.
+These codes generate very simple toy perceptron models that can be used to classify linearly seperable data.
