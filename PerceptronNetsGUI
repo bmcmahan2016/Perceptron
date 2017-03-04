@@ -4,13 +4,15 @@
 Created on Fri Mar  3 23:32:39 2017
 
 @author: Brandon McMahan
-Software package that will allow the user to design and train a multilayer 
-neural network
+
+Description
+Software package that will allow the user to design and train a single layer 
+neural network where each neuron is a Perceptron
 """
 
 #!/usr/bin/python
 import Tkinter
-#import tkMessageBox
+import tkMessageBox
 
 #theme color for NerveNets in hex
 color2 = '#390f8c'        #rich purple
@@ -23,10 +25,11 @@ color5 = ''
 window1 = Tkinter.Tk()
 window1.title('PerceptionNets--Initalize Network Part 1')
 window1.configure(bg=color1)
+window1.minsize(width=600,height=400)
 window1.attributes("-topmost",True)
 
-text = Tkinter.Text(window1,width=50,height=10,bg = color1, highlightbackground = color1)
-text.insert(Tkinter.INSERT, "Hello! Welcome to PerceptionNets. Perception nets will \
+text = Tkinter.Text(window1,width=80,height=8,bg = color1, highlightbackground = color1)
+text.insert(Tkinter.INSERT, "Hello! Welcome to PerceptionNets. \n\nPerception nets will \
 allow you to create a single layer Perceptron network that may be used \
 for classification problems with linearly seperable data. To begin please \
 enter the number of perceptrons your classification problem will require. \
@@ -34,63 +37,77 @@ If you would like to run a tutorial and learn more about how PerceptionNets \
 works please click the Tutorial button below. Otherwise select Submit once \
 you have specified the number of Perceptrons.")
 
+text1 = Tkinter.Text(window1,width=60,height=1,bg = color1, highlightbackground = color1)
+text1.insert(Tkinter.INSERT, "Or, you may also load a previously constructed network: ")
+
 prompt1 = Tkinter.Label(window1,text="Please enter the number of neurons you want: ",bg = color1, highlightbackground = color1)
+prompt2 = Tkinter.Label(window1,text="Please enter the size of training data: ",bg = color1, highlightbackground = color1)
 
-prompt1.grid(row=1, column = 0)
-text.grid(row=0,column=0)
+prompt1.place(x=20, y = 150)
+prompt2.place(x=20, y = 200)
+text.place(x=0,y=0)
+text1.place(x=0,y=350)
 form1 = Tkinter.Entry(window1,bd=1,width=3,bg=color1,highlightbackground = color1)
-form1.grid(row=1,column=1)
+form2 = Tkinter.Entry(window1,bd=1,width=9,bg=color1,highlightbackground = color1)
+form1.place(x=350,y=150)
+form2.place(x=325,y = 200)
 
-def InitializeLayers():
+def TutorialCallback():
+    tutorial_info = "Welcome to the PerceptronNets Tutorial! \n\n\nPerceptron Nets \
+creates single layer neural networks where each neuron is modeled by a perceptron. \
+These neural networks are ideal for classifying data that is linearly seperable. \
+A single perceptron recieves input data and outputs a binary +/-. This means that \
+a single perceptron is able to classify an input dataset as True or False. It works \
+by taking a weighted sum of the input datapoints and then comparing that sum to a \
+threshold. If the sume exceeds the threshold vaue then + is returned, otherwise - \
+is returned."
+    tkMessageBox.showinfo( "PerceptronNets Tutorial", tutorial_info)
+        
+#this executes after user has entered size of each layer and closes window2    
+def CreateNetworkCallback():
+    #get the number of neurons we need to put in each layer
     noLayers = form1.get()      #this is the desired number of layers entered by the user
-    window2 = Tkinter.Tk()
-    window2.title('PerceptionNets--Initalize Layers')
-    window2.configure(bg=color1)
+    noInputs = form2.get()
+    noLayers = int(noLayers)
+    noInputs = int(noInputs)+1
+    window3 = Tkinter.Tk()
+    window3.title('PerceptionNets--Artificial Neural Network')
+    window3.configure(bg=color1)
+    window3.attributes("-topmost",True)
+    window3.minsize(width=700,height=550)
     window1.destroy()
     noLayers = int(noLayers)
-    print "Number of layers: %.2d" %noLayers
-    layers_text = []
-    layers_form = []
-    for i in range(noLayers):
-        layers_text.append(Tkinter.Label(window2,text="number of inputs to neurons %.2d: " %i,bg = color1, highlightbackground = color1))
-        layers_form.append(Tkinter.Entry(window2, bd = 1, width = 3, bg = color1, highlightbackground = color1))
-        
-    #this executes after user has entered size of each layer and closes window2    
-    def CreateNetworkCallback():
-        #get the number of neurons we need to put in each layer
-        layers = []
-        for i in range(len(layers_form)):
-            layers.append(layers_form[i].get())
             
-        window3 = Tkinter.Tk()
-        window3.title('PerceptionNets--Artificial Neural Network')
-        window3.configure(bg=color1)
-        window2.destroy()
-            
-        C = Tkinter.Canvas(window3, bg=color1,highlightbackground=color1, height=600, width=800)
-        dx = 800/len(layers) #partition screen
-        dy = 600/len(layers)
-        neurons = []
-        for i in range(len(layers)):
-            neurons.append(C.create_oval(0, dy*i, 0.25*dx, 0.25*dy*(i+1)))
-        #now unpack the canvas
-        C.pack()
-        window3.mainloop()
-    #create a text label for each desired layer
+    C = Tkinter.Canvas(window3, bg=color2,highlightbackground=color1, height=450, width=200)
+    dx = 800/noLayers #partition screen
+    dy = 400/noLayers
+    neurons = []
     for i in range(noLayers):
-        layers_text[i].grid(row=i,column=0)
-        layers_form[i].grid(row=i,column=1)
-        
-
-
-
-    B1 = Tkinter.Button(window2, text ="Create Network", command = CreateNetworkCallback,bg=color1,highlightbackground = color1)
-    B1.grid(row = len(layers_text)+1, column = 2)
-    window2.mainloop()
+        neurons.append(C.create_oval(75, 50+dy*i, 75+0.25*dx, 50+dy*i+dy*0.5,fill="purple",outline="purple"))
+    #now unpack the canvas
+    C.place(x=50,y=50)
+    #label the figure
+    L1 = Tkinter.Label(window3,text="Neural Network Schematic",bg = color1, highlightbackground = color1, width=15)
+    L2 = Tkinter.Label(window3,text="Network Options",bg = color1, highlightbackground = color1, width = 50)
+    L1.place(x=20,y=20)
+    L2.place(x=150,y=20)
     
+    #create buttons under network options
+    B1 = Tkinter.Button(window3,text="Load Training Data",bg = color1, highlightbackground = color1)
+    B2 = Tkinter.Button(window3,text="Training Data Help",bg = color1, highlightbackground = color1)
+    B3 = Tkinter.Button(window3,text="Train Network",bg = color1, highlightbackground = color1)
+    B4 = Tkinter.Button(window3,text="Train Network Help",bg = color1, highlightbackground = color1)
+    B1.place(x=300,y=100)
+    B2.place(x=450,y=100)
+    B3.place(x=300,y=200)
+    B4.place(x=450,y=200)
+    window3.mainloop()
+        
 
-
-B1 = Tkinter.Button(window1,text="Create Layers",command=InitializeLayers,bg=color1,highlightbackground = color1)
-B1.grid(row=2,column=1)
+B1 = Tkinter.Button(window1,text="Create Network",command=CreateNetworkCallback,bg=color1,highlightbackground = color1)
+B2 = Tkinter.Button(window1,text="Tutorial",command=TutorialCallback, bg=color1,highlightbackground = color1)
+B1.place(x = 300,y = 250)
+B2.place(x=100, y=250)
+B3 = Tkinter.Button(window1,text="Load Saved Network",command=TutorialCallback, bg=color1,highlightbackground = color1)
+B3.place(x = 425,y = 350)
 window1.mainloop()
-
