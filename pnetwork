@@ -1,0 +1,79 @@
+#!/usr/bin/env python2
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Mar  8 11:25:54 2017
+
+@author: Brandon McMahan
+Description: This module will be used for creating single layer perceptron 
+neural networks
+"""
+
+
+import numpy as np
+#BEGIN CREATION OF PERCEPTRON CLASS
+class Perceptron(object):
+    #construct a perceptron object
+    def __init__(self,noInputs, noExamples):
+        self.y = np.zeros(noExamples)
+        self.w = np.zeros(noInputs+1)
+    
+    #this will define the target function for each perceptron
+    def target_fcn(self,digit,labels):
+        for i in range(len(labels)):
+            if labels[i][digit] == 1:
+                self.y[i] = +1
+            else:
+                self.y[i] = -1
+    
+    def learn(self,x):
+        for n in range(len(self.y)):
+            if self.y[n]!=np.sign(np.dot(self.w,x[n][0:785])):
+                self.w = self.w + self.y[n]*x[n][0:785]
+            else:
+                self.w = self.w
+        
+    #method to compute the current in sample error for perceptron
+    def error_fcn(self,x):
+        network = np.sign(np.dot(x,self.w))
+        error = 0.0 #initialize error as a flaoting point
+        for i in range(len(network)):
+            if network[i]==self.y[i]:
+                error = error + 0.0
+            else:
+                error = error + 1.0
+        #normalize error
+        error = error/len(network)
+        return error
+#END CREATION OF PERCEPTRON CLASS
+
+#network class will interact with perceptron objects to pass appropriate data 
+#to each perceptron
+
+
+#BEGIN CREATION OF NETWORK CLASS
+class Perceptron_Network(object):
+    def __init__(self,noPerceptrons,noInputs,noExamples):
+        self.perceptrons = []
+        for i in range(noPerceptrons):
+            self.perceptrons.append(Perceptron(noInputs,noExamples))
+        
+    def get_target_fcn(self,labels):
+        #assign each perceptron its appropriate target function
+        for i in range(len(self.perceptrons)):
+            self.perceptrons[i].target_fcn(i,labels)
+            
+    def train(self,training_data):
+        for i in range(len(self.perceptrons)):
+            error = 10
+            while (error > 0.05):
+                self.perceptrons[i].learn(training_data)
+                error = self.perceptrons[i].error_fcn(training_data)
+            print "Error for perceptron %.2d is %.4f%%" %(i,100*error)
+        
+    def Input(self,data_in):
+        outputs = np.zeros(len(self.perceptrons))
+        for i in range(len(self.perceptrons)):
+            outputs[i] = np.sign(np.dot(self.perceptrons[i].w,data_in))
+        #digit = np.nonzero(outputs)
+        return outputs
+#END CREATION OF NETWORK CLASS
