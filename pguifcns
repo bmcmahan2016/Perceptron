@@ -1,0 +1,89 @@
+#!/usr/bin/env python2
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Mar  8 12:55:22 2017
+
+@author: brandonjamesmcmahan
+this module includes all perceptron GUI functions
+"""
+
+import numpy as np
+import pnetwork as pn
+import json
+import Tkinter
+
+color1 = '#cce0ff'        #sky blue
+
+
+#function to load training data
+def getPath():
+    load_window = Tkinter.Tk()
+    load_window.title('PerceptionNets--Initalize Network Part 1')
+    load_window.configure(bg=color1)
+    load_window.minsize(width=600,height=400)
+    load_window.attributes("-topmost",True)
+    
+    form1 = Tkinter.Entry(load_window,bd=1,width=30,bg=color1,highlightbackground = color1)
+    form1.pack()
+    B1 = Tkinter.Button(load_window,text="Load Training Data",command=lambda: LoadTrainData(form1,load_window),bg = color1, highlightbackground = color1)
+    B1.pack()
+    load_window.mainloop()
+ 
+    
+    
+def LoadTrainData(form1,load_window):
+    fname = form1.get()
+    load_window.destroy()
+    global x,y,noExamples
+    #open file containing data
+    fname = '/Users/brandonjamesmcmahan/Documents/Resumes/TrainingData.txt'
+    f = open(fname,'r+')
+    #decode data from that file
+    my_dict=json.load(f)
+    f.close()   #close the file
+    #get data as a numpy array
+    x = np.asarray(my_dict['examples'])
+    y = np.asarray(my_dict['labels'])   
+    noExamples = len(y)
+    
+#end load training data
+    
+
+#function to train network
+def TrainNetwork(noNeurons,noInputs,noExamples):
+    global x,y
+    #create a perceptron network with the desired properties
+    classifier = pn.Perceptron_Network(noNeurons,noInputs,noExamples)
+    #create a target function for each perceptron in the network
+    classifier.get_target_fcn(y)
+    #train each perceptron in the network
+    classifier.train(x)
+#end function to train network
+
+#function to save current network parameters
+def SaveNetwork(W,fname):
+    W = W.tolist()      #convert weights to something that is json serializable
+    f = open(fname,'r+')
+    json.dump(W,f)
+    f.close()
+#end function to save current network parameters
+
+
+#SCRAPED CODE
+#    #we need the training data to be in a global variable
+#    global xt,yt
+#    #this needs to be replaced with a call to read data from a file
+#    from tensorflow.examples.tutorials.mnist import input_data
+#    mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
+#    #BEGIN GENERATION OF TRAINING DATA
+#    N = noExamples;   #generate N training data points
+#    xt = np.zeros((N,noInputs + 1))     #initialize training data examples
+#    yt = np.zeros((N,noNeurons))         #this will label the data
+#    for n in range(0,N):
+#        xt[n][0] = 1                             #we need this as a threshold for PLA
+#        x_,y_ = mnist.train.next_batch(1)
+#        xt[n][1:noInputs+1] = x_[0][0:noInputs]                        #this is the data for each image
+#        yt[n] = y_[0][0:noNeurons]
+#    #END GENERATION OF TRAINING DATA POINTS
+#    return 0
+##end function to load training data
