@@ -9,10 +9,15 @@ Description
 Software package that will allow the user to design and train a single layer 
 neural network where each neuron is a Perceptron
 """
-
-#!/usr/bin/python
+#import desired packages
+import numpy as np
 import Tkinter
 import tkMessageBox
+import pnetwork as pn
+from pguifcns import *
+
+#!/usr/bin/python
+
 
 #theme color for NerveNets in hex
 color2 = '#390f8c'        #rich purple
@@ -62,27 +67,29 @@ by taking a weighted sum of the input datapoints and then comparing that sum to 
 threshold. If the sume exceeds the threshold vaue then + is returned, otherwise - \
 is returned."
     tkMessageBox.showinfo( "PerceptronNets Tutorial", tutorial_info)
-        
+    
+    
+
 #this executes after user has entered size of each layer and closes window2    
 def CreateNetworkCallback():
     #get the number of neurons we need to put in each layer
-    noLayers = form1.get()      #this is the desired number of layers entered by the user
+    noNeurons = form1.get()      #this is the desired number of layers entered by the user
     noInputs = form2.get()
-    noLayers = int(noLayers)
-    noInputs = int(noInputs)+1
+    noNeurons = int(noNeurons)
+    noInputs = int(noInputs)
     window3 = Tkinter.Tk()
     window3.title('PerceptionNets--Artificial Neural Network')
     window3.configure(bg=color1)
     window3.attributes("-topmost",True)
     window3.minsize(width=700,height=550)
     window1.destroy()
-    noLayers = int(noLayers)
-            
+    
+    
     C = Tkinter.Canvas(window3, bg=color2,highlightbackground=color1, height=450, width=200)
-    dx = 800/noLayers #partition screen
-    dy = 400/noLayers
+    dx = 800/noNeurons #partition screen
+    dy = 400/noNeurons
     neurons = []
-    for i in range(noLayers):
+    for i in range(noNeurons):
         neurons.append(C.create_oval(75, 50+dy*i, 75+0.25*dx, 50+dy*i+dy*0.5,fill="purple",outline="purple"))
     #now unpack the canvas
     C.place(x=50,y=50)
@@ -93,14 +100,18 @@ def CreateNetworkCallback():
     L2.place(x=150,y=20)
     
     #create buttons under network options
-    B1 = Tkinter.Button(window3,text="Load Training Data",bg = color1, highlightbackground = color1)
-    B2 = Tkinter.Button(window3,text="Training Data Help",bg = color1, highlightbackground = color1)
-    B3 = Tkinter.Button(window3,text="Train Network",bg = color1, highlightbackground = color1)
-    B4 = Tkinter.Button(window3,text="Train Network Help",bg = color1, highlightbackground = color1)
+    B1 = Tkinter.Button(window3,text="Load Training Data",command= getPath,bg = color1, highlightbackground = color1)
+    B2 = Tkinter.Button(window3,text="Training Data Help",command=TutorialCallback,bg = color1, highlightbackground = color1)
+    B3 = Tkinter.Button(window3,text="Train Network",command=lambda: TrainNetwork(noNeurons,noInputs,noExamples),bg = color1, highlightbackground = color1)
+    B4 = Tkinter.Button(window3,text="Train Network Help",command=TutorialCallback,bg = color1, highlightbackground = color1)
+    B5 = Tkinter.Button(window3,text="Load Data For Classification",command=TutorialCallback,bg = color1, highlightbackground = color1)
+    B6 = Tkinter.Button(window3,text="Save Network",command=TutorialCallback,bg = color1, highlightbackground = color1)
     B1.place(x=300,y=100)
     B2.place(x=450,y=100)
     B3.place(x=300,y=200)
     B4.place(x=450,y=200)
+    B5.place(x=300,y=500)
+    B6.place(x=550,y=500)
     window3.mainloop()
         
 
